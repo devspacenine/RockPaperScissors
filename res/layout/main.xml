@@ -1,101 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:background="@drawable/background"
-	android:paddingTop="15dip"
-	android:paddingRight="5dip"
-	android:paddingBottom="15dip"
-	android:paddingLeft="5dip" >
+	android:paddingTop="15dip" >
+	<ImageView
+		android:id="@+id/app_title"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_marginBottom="5dip"
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+		android:layout_alignParentTop="true"
+   		android:layout_centerHorizontal="true"
+   		android:src="@drawable/rps_title" />
    	<ImageView 
    		android:id="@+id/game_logo"
    		android:layout_height="wrap_content"
-   		android:layout_width="wrap_content"
-   		android:layout_marginBottom="30dip"
-   		android:layout_alignParentTop="true"
+   		android:layout_width="match_parent"
+   		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+   		android:layout_below="@id/app_title"
    		android:layout_centerHorizontal="true"
    		android:src="@drawable/logo" />
-   	<TextView
-   		android:id="@+id/home_title"
-   		android:layout_height="wrap_content"
-   		android:layout_width="wrap_content"
-   		android:layout_below="@id/game_logo"
-   		android:layout_centerHorizontal="true"
-   		android:layout_marginBottom="10dip"
-   		android:maxLines="1"
-   		android:textColor="#FFFFFF"
-   		android:textStyle="bold"
-   		android:textSize="24sp"
-   		android:shadowColor="#363636"
-		android:shadowDx="1.1"
-		android:shadowDy="1.1"
-		android:shadowRadius="1.1"
-   		android:text="@string/home_title" />
-   	<LinearLayout
-   		android:id="@+id/play_android"
-   		android:orientation="vertical"
-   		android:layout_height="wrap_content"
-   		android:layout_width="wrap_content"
-   		android:layout_below="@id/home_title"
-   		android:layout_alignParentLeft="true"
-   		android:layout_centerVertical="true" >
-	   	<ImageView
-			android:id="@+id/robot_img"
-			android:tag="COMPUTER"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:background="#0FFF"
-			android:layout_marginBottom="2dip"
-			android:onClick="playGame"
-			android:src="@drawable/robot_button" />
-		<TextView
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_gravity="center_horizontal"
-			android:textColor="#FFFFFF"
-			android:textStyle="bold"
-			android:textSize="22sp"
-			android:shadowColor="#363636"
-			android:shadowDx="1.1"
-			android:shadowDy="1.1"
-			android:shadowRadius="1.1"
-			android:text="@string/play_android" />
-	</LinearLayout>
-	<LinearLayout
-   		android:id="@+id/play_friend"
-   		android:orientation="vertical"
-   		android:layout_height="wrap_content"
-   		android:layout_width="wrap_content"
-   		android:layout_below="@id/home_title"
-   		android:layout_alignParentRight="true"
-   		android:layout_centerVertical="true" >
-	   	<ImageView
-			android:id="@+id/bt_img"
-			android:tag="FRIEND"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:background="#0FFF"
-			android:layout_marginBottom="2dip"
-			android:onClick="playGame"
-			android:src="@drawable/bluetooth_button" />
-		<TextView
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_gravity="center_horizontal"
-			android:textColor="#FFFFFF"
-			android:textStyle="bold"
-			android:textSize="22sp"
-			android:shadowColor="#363636"
-			android:shadowDx="1.1"
-			android:shadowDy="1.1"
-			android:shadowRadius="1.1"
-			android:text="@string/play_friend" />
-	</LinearLayout>
-   	<Button
-   		style="@style/SimpleButton"
-   		android:tag="STATS"
+   	<com.google.ads.AdView
+   		android:id="@+id/adView"
+   		android:layout_width="match_parent"
+   		android:layout_height="50dip"
    		android:layout_alignParentBottom="true"
    		android:layout_centerHorizontal="true"
-   		android:text="@string/main_menu_stats"
-   		android:onClick="viewStats" />
+   		ads:adUnitId="@string/ad_publisher_id"
+   		ads:adSize="BANNER"
+   		ads:loadAdOnCreate="true" />
+   	<RelativeLayout
+   		android:id="@+id/game_menu"
+   		android:layout_height="match_parent"
+   		android:layout_width="match_parent"
+   		android:layout_below="@id/game_logo"
+   		android:layout_above="@id/adView"
+   		android:gravity="center" >
+	   	<TextView
+	   		android:id="@+id/home_subtitle"
+	   		android:layout_height="wrap_content"
+	   		android:layout_width="wrap_content"
+	   		android:layout_marginBottom="10dip"
+	   		android:layout_centerHorizontal="true"
+	   		android:maxLines="1"
+	   		android:textColor="#FFFFFF"
+	   		android:textStyle="bold"
+	   		android:textSize="24sp"
+	   		android:shadowColor="#363636"
+			android:shadowDx="1.1"
+			android:shadowDy="1.1"
+			android:shadowRadius="1.1"
+	   		android:text="@string/home_subtitle" />
+	   	<LinearLayout
+	   		android:id="@+id/main_buttons"
+	   		android:orientation="horizontal"
+	   		android:layout_height="wrap_content"
+	   		android:layout_width="match_parent" 
+	   		android:layout_below="@id/home_subtitle"
+	   		android:layout_marginBottom="15dip" >
+		   	<LinearLayout
+		   		android:id="@+id/play_android"
+		   		android:orientation="vertical"
+		   		android:layout_height="wrap_content"
+		   		android:layout_width="match_parent"
+		   		android:layout_weight="1" >
+			   	<ImageView
+					android:id="@+id/robot_img"
+					android:tag="COMPUTER"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:background="#0FFF"
+					android:layout_marginBottom="2dip"
+					android:onClick="playGame"
+					android:src="@drawable/robot_button" />
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:textColor="#FFFFFF"
+					android:textStyle="bold"
+					android:textSize="22sp"
+					android:shadowColor="#363636"
+					android:shadowDx="1.1"
+					android:shadowDy="1.1"
+					android:shadowRadius="1.1"
+					android:text="@string/play_android" />
+			</LinearLayout>
+			<LinearLayout
+		   		android:id="@+id/play_friend"
+		   		android:orientation="vertical"
+		   		android:layout_height="wrap_content"
+		   		android:layout_width="match_parent"
+		   		android:layout_weight="1" >
+			   	<ImageView
+					android:id="@+id/bt_img"
+					android:tag="FRIEND"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:background="#0FFF"
+					android:layout_marginBottom="2dip"
+					android:onClick="playGame"
+					android:src="@drawable/bluetooth_button" />
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:textColor="#FFFFFF"
+					android:textStyle="bold"
+					android:textSize="22sp"
+					android:shadowColor="#363636"
+					android:shadowDx="1.1"
+					android:shadowDy="1.1"
+					android:shadowRadius="1.1"
+					android:text="@string/play_friend" />
+			</LinearLayout>
+		</LinearLayout>
+		<Button
+	   		style="@style/SimpleButton"
+	   		android:tag="STATS"
+	   		android:layout_below="@id/main_buttons"
+	   		android:layout_centerHorizontal="true"
+	   		android:text="@string/main_menu_stats"
+	   		android:onClick="viewStats" />
+	</RelativeLayout>
 </RelativeLayout>

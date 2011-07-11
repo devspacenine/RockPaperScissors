@@ -5,7 +5,7 @@
 	<RadioGroup
 		android:id="@+id/choice_group"
 		android:orientation="horizontal"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="30px"
 		android:gravity="center" >
@@ -54,7 +54,11 @@
 		android:layout_marginBottom="15px"
 		android:textSize="20sp"
 		android:textStyle="bold"
-		android:textColor="#FFFFFF"
+   		android:textColor="#FFFFFF"
+   		android:shadowColor="#666666"
+   		android:shadowDx="1.0"
+   		android:shadowDy="1.0"
+   		android:shadowRadius="1.0"
 		android:text="@string/radio_button_step" />
 	<TextView
 		android:id="@+id/radio_button_prompt"
@@ -65,7 +69,11 @@
 		android:layout_marginBottom="15px"
 		android:textSize="20sp"
 		android:textStyle="bold"
-		android:textColor="#FFFFFF"
+   		android:textColor="#FFFFFF"
+   		android:shadowColor="#666666"
+   		android:shadowDx="1.0"
+   		android:shadowDy="1.0"
+   		android:shadowRadius="1.0"
 		android:text="@string/radio_button_prompt" />
 	<TextView
 		android:id="@+id/accelerometer_step"
@@ -76,7 +84,11 @@
 		android:layout_marginRight="10px"
 		android:textSize="20sp"
 		android:textStyle="bold"
-		android:textColor="#FFFFFF"
+   		android:textColor="#FFFFFF"
+   		android:shadowColor="#666666"
+   		android:shadowDx="1.0"
+   		android:shadowDy="1.0"
+   		android:shadowRadius="1.0"
 		android:text="@string/accelerometer_step" />
 	<TextView
 		android:id="@+id/accelerometer_prompt"
@@ -86,7 +98,11 @@
 		android:layout_alignTop="@id/accelerometer_step"
 		android:textSize="20sp"
 		android:textStyle="bold"
-		android:textColor="#FFFFFF"
+   		android:textColor="#FFFFFF"
+   		android:shadowColor="#666666"
+   		android:shadowDx="1.0"
+   		android:shadowDy="1.0"
+   		android:shadowRadius="1.0"
 		android:text="@string/accelerometer_prompt" />
 	<TextView
 		android:id="@+id/accelerometer_action"
@@ -97,5 +113,9 @@
 		android:textSize="20sp"
 		android:textStyle="bold"
 		android:textColor="#D08111"
+		android:shadowColor="#666666"
+   		android:shadowDx="1.0"
+   		android:shadowDy="1.0"
+   		android:shadowRadius="1.0"
 		android:text="@string/accelerometer_action_one" />
 </RelativeLayout>

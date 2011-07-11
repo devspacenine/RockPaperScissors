@@ -2,13 +2,13 @@
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/drag_layer"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:padding="15px"
 	android:background="@drawable/background" >
 	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" >
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" >
     	<LinearLayout
     		android:id="@+id/game_board"
     		android:orientation="horizontal"
@@ -85,7 +85,7 @@
     	<RadioGroup
     		android:id="@+id/choice_group"
     		android:orientation="horizontal"
-    		android:layout_width="fill_parent"
+    		android:layout_width="match_parent"
     		android:layout_height="wrap_content"
     		android:layout_below="@id/wins_needed"
     		android:layout_marginBottom="30px"

@@ -3,8 +3,10 @@ package com.devspacenine.rockpaperscissors;
 import android.app.ExpandableListActivity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ExpandableListView;
 import android.widget.SimpleCursorTreeAdapter;
 
@@ -53,4 +55,11 @@ public class GameStats extends ExpandableListActivity {
 			return mDbAdapter.fetchGameRounds(groupCursor.getInt(groupCursor.getColumnIndexOrThrow(StatsDbAdapter.KEY_ROWID)));
 		}
 	}
+	
+	@Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Window window = getWindow();
+        window.setFormat(PixelFormat.RGBA_8888);
+    }
 }

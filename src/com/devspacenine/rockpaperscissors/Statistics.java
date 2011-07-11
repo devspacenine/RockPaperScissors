@@ -1,12 +1,16 @@
 package com.devspacenine.rockpaperscissors;
 
+import com.google.ads.AdRequest;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 public class Statistics extends Activity {
@@ -16,6 +20,12 @@ public class Statistics extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Add test devices for development so we don't look fishy
+		AdRequest request = new AdRequest();
+		request.addTestDevice(AdRequest.TEST_EMULATOR);
+		request.addTestDevice("HT07NHL01089"); // My Evo test phone
+		request.addTestDevice("3332BBFD4E5200EC"); // My Samsung tablet
 		
 		setContentView(R.layout.rps_statistics);
 		
@@ -58,4 +68,11 @@ public class Statistics extends Activity {
 	public void onPlayChoiceHistory(View v){
 		
 	}
+	
+	@Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Window window = getWindow();
+        window.setFormat(PixelFormat.RGBA_8888);
+    }
 }

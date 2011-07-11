@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <com.devspacenine.rockpaperscissors.DragLayer
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
 	android:id="@+id/drag_layer"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -26,7 +27,11 @@
     				android:layout_height="wrap_content"
     				android:textSize="20sp"
     				android:textStyle="bold"
-    				android:textColor="#FFFFFF"
+		    		android:textColor="#FFFFFF"
+		    		android:shadowColor="#666666"
+		    		android:shadowDx="1.0"
+		    		android:shadowDy="1.0"
+		    		android:shadowRadius="1.0"
     				android:layout_gravity="center_horizontal"
     				android:layout_marginBottom="5px"
     				android:text="@string/game_player" />
@@ -43,6 +48,10 @@
     				android:textSize="25sp"
     				android:textStyle="bold"
     				android:textColor="#D08111"
+    				android:shadowColor="#666666"
+		    		android:shadowDx="1.0"
+		    		android:shadowDy="1.0"
+		    		android:shadowRadius="1.0"
     				android:layout_gravity="center_horizontal"
     				android:text="0" />
     		</LinearLayout>
@@ -59,6 +68,10 @@
     				android:textSize="20sp"
     				android:textStyle="bold"
     				android:textColor="#FFFFFF"
+    				android:shadowColor="#666666"
+		    		android:shadowDx="1.0"
+		    		android:shadowDy="1.0"
+		    		android:shadowRadius="1.0"
     				android:layout_gravity="center_horizontal"
     				android:text="@string/game_opponent" />
     			<ImageView
@@ -74,6 +87,10 @@
     				android:textSize="25sp"
     				android:textStyle="bold"
     				android:textColor="#D08111"
+    				android:shadowColor="#666666"
+		    		android:shadowDx="1.0"
+		    		android:shadowDy="1.0"
+		    		android:shadowRadius="1.0"
     				android:layout_gravity="center_horizontal"
     				android:text="0" />
     		</LinearLayout>
@@ -85,6 +102,13 @@
     		android:layout_below="@id/game_board"
     		android:layout_centerHorizontal="true"
     		android:layout_marginBottom="30px"
+    		android:textSize="16sp"
+    		android:textStyle="bold"
+    		android:textColor="#FFFFFF"
+    		android:shadowColor="#666666"
+    		android:shadowDx="1.0"
+    		android:shadowDy="1.0"
+    		android:shadowRadius="1.0"
     		android:text="@string/wins_needed" />
     	<ViewStub
     		android:id="@+id/game_images"
@@ -98,5 +122,14 @@
     		android:layout_width="match_parent"
     		android:layout_height="wrap_content"
     		android:layout_below="@id/wins_needed" />
+    	<com.google.ads.AdView
+   		android:id="@+id/adView"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_alignParentBottom="true"
+   		android:layout_centerHorizontal="true"
+   		ads:adUnitId="@string/ad_publisher_id"
+   		ads:adSize="BANNER"
+   		ads:loadAdOnCreate="true" />
 	</RelativeLayout>
 </com.devspacenine.rockpaperscissors.DragLayer>

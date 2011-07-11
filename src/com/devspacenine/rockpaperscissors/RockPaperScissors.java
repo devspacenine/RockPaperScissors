@@ -9,6 +9,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -16,8 +17,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.ads.AdRequest;
 
 public class RockPaperScissors extends Activity implements View.OnTouchListener, OnDismissListener {
 	// Dialog ids
@@ -55,6 +59,13 @@ public class RockPaperScissors extends Activity implements View.OnTouchListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Add test devices for development so we don't look fishy
+		AdRequest request = new AdRequest();
+		request.addTestDevice(AdRequest.TEST_EMULATOR);
+		request.addTestDevice("HT07NHL01089"); // My Evo test phone
+		request.addTestDevice("3332BBFD4E5200EC"); // My Samsung tablet
+        
         setContentView(R.layout.main);
         
         // Setup the sound manager
@@ -267,5 +278,12 @@ public class RockPaperScissors extends Activity implements View.OnTouchListener,
     	default:
     		return super.onOptionsItemSelected(item);
     	}
+    }
+    
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Window window = getWindow();
+        window.setFormat(PixelFormat.RGBA_8888);
     }
 }

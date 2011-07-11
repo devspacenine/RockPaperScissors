@@ -7,7 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.ViewStub;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;

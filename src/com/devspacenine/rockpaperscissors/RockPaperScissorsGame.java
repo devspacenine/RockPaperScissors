@@ -22,15 +22,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.ads.AdRequest;
 
 public class RockPaperScissorsGame extends Activity implements OnDismissListener, OnCancelListener {
 	// Message types sent from the BluetoothChatService Handler
@@ -180,6 +184,13 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 	public void onCreate(Bundle savedInstanceState) {
     	Log.d("DSN Debug", "Calling onCreate");
 		super.onCreate(savedInstanceState);
+		
+		// Add test devices for development so we don't look fishy
+		AdRequest request = new AdRequest();
+		request.addTestDevice(AdRequest.TEST_EMULATOR);
+		request.addTestDevice("HT07NHL01089"); // My Evo test phone
+		request.addTestDevice("3332BBFD4E5200EC"); // My Samsung tablet
+		
 		setContentView(R.layout.game);
 		
 		// Initialize variables
@@ -903,4 +914,11 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
         	}
         }
     };
+    
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Window window = getWindow();
+        window.setFormat(PixelFormat.RGBA_8888);
+    }
 }
