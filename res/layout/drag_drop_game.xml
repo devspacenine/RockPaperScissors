@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.devspacenine.rockpaperscissors.DragLayer
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/drag_layer"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="15px"
+	android:background="@drawable/background" >
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+    	<LinearLayout
+    		android:id="@+id/game_board"
+    		android:orientation="horizontal"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_centerHorizontal="true"
+    		android:layout_marginBottom="30px" >
+    		<LinearLayout
+    			android:orientation="vertical"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:layout_marginRight="60px" >
+    			<TextView
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="20sp"
+    				android:textStyle="bold"
+    				android:textColor="#FFFFFF"
+    				android:layout_gravity="center_horizontal"
+    				android:layout_marginBottom="5px"
+    				android:text="@string/game_player" />
+    			<com.devspacenine.rockpaperscissors.DropTargetView
+    				android:id="@+id/player_choice"
+    				android:layout_height="wrap_content"
+    				android:layout_width="wrap_content"
+    				android:src="@drawable/blank" />
+    			<TextView
+    				android:id="@+id/player_win_count"
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="25sp"
+    				android:textStyle="bold"
+    				android:textColor="#D08111"
+    				android:layout_gravity="center_horizontal"
+    				android:text="0" />
+    		</LinearLayout>
+    		<LinearLayout
+    			android:orientation="vertical"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content" >
+    			<TextView
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_marginBottom="5px"
+    				android:textSize="20sp"
+    				android:textStyle="bold"
+    				android:textColor="#FFFFFF"
+    				android:layout_gravity="center_horizontal"
+    				android:text="@string/game_opponent" />
+    			<ImageView
+    				android:id="@+id/opponent_choice"
+    				android:layout_height="wrap_content"
+    				android:layout_width="wrap_content"
+    				android:src="@drawable/blank" />
+    			<TextView
+    				android:id="@+id/opponent_win_count"
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="25sp"
+    				android:textStyle="bold"
+    				android:textColor="#D08111"
+    				android:layout_gravity="center_horizontal"
+    				android:text="0" />
+    		</LinearLayout>
+    	</LinearLayout>
+    	<TextView 
+    		android:id="@+id/wins_needed"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@id/game_board"
+    		android:layout_centerHorizontal="true"
+    		android:layout_marginBottom="30px"
+    		android:text="@string/wins_needed" />
+    	<ImageView
+    		android:id="@+id/rock_img"
+    		android:tag="ROCK"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:layout_below="@id/wins_needed"
+    		android:layout_alignParentLeft="true"
+    		android:background="#0FFF"
+    		android:src="@drawable/rock" />
+    	<ImageView
+    		android:id="@+id/paper_img"
+    		android:tag="PAPER"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:layout_below="@id/wins_needed"
+    		android:layout_centerHorizontal="true"
+    		android:background="#0FFF"
+    		android:src="@drawable/paper" />
+    	<ImageView
+    		android:id="@+id/scissors_img"
+    		android:tag="SCISSORS"
+    		android:layout_height="wrap_content"
+    		android:layout_width="wrap_content"
+    		android:layout_below="@id/wins_needed"
+    		android:layout_alignParentRight="true"
+    		android:background="#0FFF"
+    		android:src="@drawable/scissors" />
+	</RelativeLayout>
+</com.devspacenine.rockpaperscissors.DragLayer>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/drag_layer"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="15px"
+	android:background="@drawable/background" >
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" >
+    	<LinearLayout
+    		android:id="@+id/game_board"
+    		android:orientation="horizontal"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_centerHorizontal="true"
+    		android:layout_marginBottom="30px" >
+    		<LinearLayout
+    			android:orientation="vertical"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:layout_marginRight="60px" >
+    			<TextView
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="20sp"
+    				android:textStyle="bold"
+    				android:textColor="#FFFFFF"
+    				android:layout_gravity="center_horizontal"
+    				android:layout_marginBottom="5px"
+    				android:text="@string/game_player" />
+    			<ImageView
+    				android:id="@+id/player_choice"
+    				android:layout_height="wrap_content"
+    				android:layout_width="wrap_content"
+    				android:src="@drawable/blank" />
+    			<TextView
+    				android:id="@+id/player_win_count"
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="25sp"
+    				android:textStyle="bold"
+    				android:textColor="#D08111"
+    				android:layout_gravity="center_horizontal"
+    				android:text="0" />
+    		</LinearLayout>
+    		<LinearLayout
+    			android:orientation="vertical"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content" >
+    			<TextView
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_marginBottom="5px"
+    				android:textSize="20sp"
+    				android:textStyle="bold"
+    				android:textColor="#FFFFFF"
+    				android:layout_gravity="center_horizontal"
+    				android:text="@string/game_opponent" />
+    			<ImageView
+    				android:id="@+id/opponent_choice"
+    				android:layout_height="wrap_content"
+    				android:layout_width="wrap_content"
+    				android:src="@drawable/blank" />
+    			<TextView
+    				android:id="@+id/opponent_win_count"
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="25sp"
+    				android:textStyle="bold"
+    				android:textColor="#D08111"
+    				android:layout_gravity="center_horizontal"
+    				android:text="0" />
+    		</LinearLayout>
+    	</LinearLayout>
+    	<TextView 
+    		android:id="@+id/wins_needed"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@id/game_board"
+    		android:layout_centerHorizontal="true"
+    		android:layout_marginBottom="30px"
+    		android:text="@string/wins_needed" />
+    	<RadioGroup
+    		android:id="@+id/choice_group"
+    		android:orientation="horizontal"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@id/wins_needed"
+    		android:layout_marginBottom="30px"
+    		android:gravity="center" >
+	    	<RadioButton
+	    		android:id="@+id/rock_select"
+	    		android:tag="ROCK"
+	    		android:layout_height="wrap_content"
+	    		android:layout_width="90px"
+	    		android:layout_gravity="left"
+	    		android:layout_weight="1"
+	    		android:button="@drawable/empty"
+	    		android:layout_marginRight="5dip"
+	    		style="@style/RockRadioButton" />
+	    	<RadioButton
+	    		android:id="@+id/paper_select"
+	    		android:tag="PAPER"
+	    		android:layout_height="wrap_content"
+	    		android:layout_width="90px"
+	    		android:layout_gravity="center"
+	    		android:layout_weight="1"
+	    		android:button="@drawable/empty"
+	    		android:layout_marginRight="5dip"
+	    		style="@style/PaperRadioButton" />
+	    	<RadioButton
+	    		android:id="@+id/scissors_select"
+	    		android:tag="SCISSORS"
+	    		android:layout_height="wrap_content"
+	    		android:layout_width="90px"
+	    		android:layout_gravity="right"
+	    		android:layout_weight="1"
+	    		android:button="@drawable/empty"
+	    		style="@style/ScissorsRadioButton" />
+	    	<RadioButton
+	    		android:id="@+id/empty_select"
+	    		android:layout_width="wrap_content"
+	    		android:layout_height="wrap_content"
+	    		android:visibility="gone" />
+    	</RadioGroup>
+    	<TextView
+    		android:id="@+id/radio_button_step"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@id/choice_group"
+    		android:layout_alignParentLeft="true"
+    		android:layout_marginRight="10px"
+    		android:layout_marginBottom="15px"
+    		android:textSize="20sp"
+    		android:textStyle="bold"
+    		android:textColor="#FFFFFF"
+    		android:text="@string/radio_button_step" />
+    	<TextView
+    		android:id="@+id/radio_button_prompt"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_toRightOf="@id/radio_button_step"
+    		android:layout_alignTop="@id/radio_button_step"
+    		android:layout_marginBottom="15px"
+    		android:textSize="20sp"
+    		android:textStyle="bold"
+    		android:textColor="#FFFFFF"
+    		android:text="@string/radio_button_prompt" />
+    	<TextView
+    		android:id="@+id/accelerometer_step"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@id/radio_button_step"
+    		android:layout_alignParentLeft="true"
+    		android:layout_marginRight="10px"
+    		android:textSize="20sp"
+    		android:textStyle="bold"
+    		android:textColor="#FFFFFF"
+    		android:text="@string/accelerometer_step" />
+    	<TextView
+    		android:id="@+id/accelerometer_prompt"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_toRightOf="@id/accelerometer_step"
+    		android:layout_alignTop="@id/accelerometer_step"
+    		android:textSize="20sp"
+    		android:textStyle="bold"
+    		android:textColor="#FFFFFF"
+    		android:text="@string/accelerometer_prompt" />
+    	<TextView
+    		android:id="@+id/accelerometer_action"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_below="@id/accelerometer_prompt"
+    		android:layout_alignLeft="@id/accelerometer_prompt"
+    		android:textSize="20sp"
+    		android:textStyle="bold"
+    		android:textColor="#D08111"
+    		android:text="@string/accelerometer_action_one" />
+	</RelativeLayout>
+</FrameLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<EditTextPreference
+		android:key="name_preference"
+		android:title="@string/title_name_preference"
+		android:summary="@string/summary_name_preference"
+		android:dialogTitle="@string/dialog_title_name_preference" />
+	<CheckBoxPreference
+		android:key="sounds_preference"
+		android:title="@string/title_sounds_preference"
+		android:summary="@string/summary_sounds_preference"
+		android:defaultValue="true" />
+	<ListPreference
+		android:key="game_type_preference"
+		android:title="@string/title_game_type_preference"
+		android:summary="@string/summary_game_type_preference"
+		android:entries="@array/gameTypes"
+		android:entryValues="@array/gameTypeValues"
+		android:defaultValue="ACCELEROMETER" />
+	<ListPreference 
+		android:key="accelerometer_count_preference"
+		android:title="@string/title_accelerometer_count_preference"
+		android:summary="@string/summary_accelerometer_count_preference"
+		android:entries="@array/accelerometerCounts"
+		android:entryValues="@array/accelerometerCountValues"
+		android:defaultValue="ONETWOSHOOT" />
+</PreferenceScreen>

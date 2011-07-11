@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<string-array name="gameTypes">
+		<item name="accelerometerGame">Accelerometer Game</item>
+		<item name="dragAndDropGame">Drag and Drop Game</item>
+		<item name="buttonGame">Button Game</item>
+	</string-array>
+	
+	<string-array name="gameTypeValues">
+		<item name="accelerometerGame">ACCELEROMETER</item>
+		<item name="dragAndDropGame">DRAGANDDROP</item>
+		<item name="buttonGame">BUTTON</item>
+	</string-array>
+	
+	<string-array name="accelerometerCounts">
+		<item name="oneTwoShoot">One-Two-Shoot</item>
+		<item name="oneTwoThreeShoot">One-Two-Three-Shoot</item>
+	</string-array>
+	
+	<string-array name="accelerometerCountValues">
+		<item name="oneTwoShoot">ONETWOSHOOT</item>
+		<item name="oneTwoThreeShoot">ONETWOTHREESHOOT</item>
+	</string-array>
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+	<ImageView
+		android:id="@+id/rock_img"
+		android:tag="ROCK"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:background="#0FFF"
+		android:src="@drawable/rock" />
+	<ImageView
+		android:id="@+id/paper_img"
+		android:tag="PAPER"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:background="#0FFF"
+		android:src="@drawable/paper" />
+	<ImageView
+		android:id="@+id/scissors_img"
+		android:tag="SCISSORS"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_alignParentRight="true"
+		android:background="#0FFF"
+		android:src="@drawable/scissors" />
+</RelativeLayout>

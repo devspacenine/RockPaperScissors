@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@drawable/background">
+	
+	<TableLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/stat_percent_table">
+		<TableRow>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal|center_vertical"
+				android:text="Wins"
+				android:padding="5dip" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal|center_vertical"
+				android:text="Losses"
+				android:padding="5dip" />
+		</TableRow>
+		<TableRow>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/win_percent"
+				android:gravity="center_horizontal|center_vertical"
+				android:padding="5dip"
+				android:background="@drawable/border" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/loss_percent"
+				android:gravity="center_horizontal|center_vertical" 
+				android:padding="5dip"/>
+		</TableRow>
+	</TableLayout>
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+		android:layout_marginBottom="5dip"
+		android:orientation="vertical"
+		android:layout_below="@id/stat_percent_table">
+		<Button
+			style="@style/SimpleButton"
+			android:id="@+id/button_game_hist"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:text="View Game History"
+			android:onClick="onViewHistory"/>
+		<Button
+			style="@style/SimpleButton"
+			android:id="@+id/button_play_choice_hist"
+			android:layout_below="@id/button_game_hist"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:text="View Play Choice History"
+			android:onClick="onPlayChoiceHistory"/>
+	</LinearLayout>
+	<!--  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@drawable/background">
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal"
+		/>
+	</LinearLayout>
+	</LinearLayout>-->
+</RelativeLayout>

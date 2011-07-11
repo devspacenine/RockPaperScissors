@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Super RPS</string>
+    <string name="home_title">Choose Your Opponent</string>
+    <string name="play_android">Android</string>
+    <string name="play_friend">A Friend</string>
+    <string name="main_menu_stats">View Your Statistics</string>
+    <string name="pre_game_best_of">Best Of</string>
+    <string name="pre_game_input_method">Input Options</string>
+    <string-array name="pre_game_input_method_options">
+    	<item>Buttons</item>
+    	<item>Drag and Drop</item>
+    	<item>Accelerometer</item>
+    </string-array>
+    <string-array name="best_of_options">
+    	<item>1</item>
+    	<item>3</item>
+    	<item>5</item>
+    	<item>7</item>
+    	<item>9</item>
+    </string-array>
+    <string name="pre_game_start">Start Game</string>
+    <string name="pre_game_join">Join Game</string>
+    <string name="pre_game_create">Create Game</string>
+    <string name="title_waiting">Waiting for Connection</string>
+    <string name="waiting_for_bluetooth">Waiting for another player to connect...</string>
+    <string name="button_scan">Scan for devices</string>
+    <string name="select_device">Select a Device</string>
+    <string name="none_found">No devices have been found</string>
+    <string name="title_scanning">Scanning for devices...</string>
+    <string name="title_bluetooth_connected">Connected to</string>
+    <string name="connecting">Connecting...</string>
+    <string name="disconnecting">Disconnecting...</string>
+    <string name="connecting_unpaired">Connecting... (If you don\'t see the Pair Device pop-up check the notification bar)</string>
+    <string name="title_not_connected">Not connected</string>
+    <string name="scanning">scanning for devices...</string>
+    <string name="game_menu_paper">Paper</string>
+    <string name="game_menu_rock">Rock</string>
+    <string name="game_menu_scissors">Scissors</string>
+    <string name="game_player">You</string>
+    <string name="game_opponent">Enemy</string>
+    <string name="game_draw">Draw! Thats not supposed to happen!</string>
+    <string name="game_win_rock">Yes! Your rock demolished those scissors!</string>
+    <string name="game_win_paper">Yes! Your paper covered that rock soooo hard!</string>
+    <string name="game_win_scissors">Yes! Your scissors took that paper to town!</string>
+    <string name="game_lose_rock">Oh no! Your rock was covered easily!</string>
+    <string name="game_lose_paper">Oh no! Your paper was torn asunder!</string>
+    <string name="game_lose_scissors">Oh no! Your scissors were smashed to pieces!</string>
+    <string name="game_win">You... Are... Victorious!!!!</string>
+    <string name="game_lose">How sad :(. You are terrible at this game!)</string>
+    <string name="post_game_next">Next Game</string>
+    <string name="post_game_rematch">Rematch</string>
+    <string name="wins_needed">Wins Needed: 1</string>
+    <string name="no_games">No Games Played Yet!</string>
+    <string name="radio_button_step">Step 1:</string>
+    <string name="radio_button_prompt">Choose your weapon</string>
+    <string name="accelerometer_step">Step 2:</string>
+    <string name="accelerometer_prompt">Use your phone to</string>
+    <string name="accelerometer_action_one">One! Two! Shoot!</string>
+    <string name="accelerometer_action_two">One! Two! Three! Shoot!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_help">Help</string>
+    <string name="title_name_preference">Name</string>
+    <string name="summary_name_preference">What name would you like displayed to other players</string>
+    <string name="dialog_title_name_preference">Name</string>
+    <string name="title_sounds_preference">Sound Effects</string>
+    <string name="summary_sounds_preference">Enable or disable sound effects</string>
+    <string name="title_game_type_preference">Game Input Method</string>
+    <string name="summary_game_type_preference">Choose which method you prefer to input your choice</string>
+    <string name="title_accelerometer_count_preference">Shoot Count</string>
+    <string name="summary_accelerometer_count_preference">Choose One-Two-Shoot or One-Two-Three-Shoot</string>
+</resources>

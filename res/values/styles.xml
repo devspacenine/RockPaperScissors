@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<style name="RockRadioButton">
+		<item name="android:background">@drawable/rock_select_button</item>
+	</style>
+	<style name="PaperRadioButton">
+		<item name="android:background">@drawable/paper_select_button</item>
+	</style>
+	<style name="ScissorsRadioButton">
+		<item name="android:background">@drawable/scissors_select_button</item>
+	</style>
+	<style name="Theme.Transparent" parent="android:Theme">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:colorBackground">#00000000</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowIsFloating">true</item>
+	</style>
+	<style name="SimpleButton">
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:background">@drawable/simple_button</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">18sp</item>
+		<item name="android:textColor">#363636</item>
+		<item name="android:shadowColor">#666666</item>
+		<item name="android:shadowDx">1.0</item>
+		<item name="android:shadowDy">1.0</item>
+		<item name="android:shadowRadius">1.0</item>
+	</style>
+</resources>

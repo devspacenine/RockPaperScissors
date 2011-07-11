@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.devspacenine.rockpaperscissors"
+      android:versionCode="1"
+      android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="8" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
+        <activity android:name=".RockPaperScissors"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".JoinBluetoothGame" />
+        <activity android:name=".DragAndDropGame" />
+        <activity android:name=".AccelerometerGame" android:screenOrientation="portrait" />
+        <activity android:name=".DeviceListActivity"
+        		  android:label="@string/select_device"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".ButtonGame"></activity>
+        <activity android:name=".Statistics"></activity>
+        <activity android:name=".GameStats"></activity>
+        <activity android:name=".Settings"></activity>
+    </application>
+</manifest>

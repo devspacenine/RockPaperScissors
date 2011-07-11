@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    >
+    <TextView android:id="@+id/no_devices_found"
+    	android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/none_found"
+        android:textColor="#fff"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+    />
+    <ListView android:id="@+id/available_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stackFromBottom="true"
+    />
+</LinearLayout>

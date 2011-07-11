@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@drawable/background" >
+	<LinearLayout
+    	android:orientation="vertical"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_centerInParent="true" >
+    	<RelativeLayout
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:layout_marginBottom="60px"
+    		android:paddingLeft="90px"
+    		android:paddingRight="90px" >
+    		<LinearLayout
+    			android:orientation="vertical"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:layout_alignParentLeft="true" >
+    			<TextView
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="20sp"
+    				android:textStyle="bold"
+    				android:textColor="#FFFFFF"
+    				android:layout_gravity="center_horizontal"
+    				android:layout_marginBottom="5px"
+    				android:text="@string/game_player" />
+    			<ImageView
+    				android:id="@+id/player_choice"
+    				android:layout_height="wrap_content"
+    				android:layout_width="wrap_content"
+    				android:src="@drawable/blank" />
+    			<TextView
+    				android:id="@+id/player_win_count"
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="25sp"
+    				android:textStyle="bold"
+    				android:textColor="#D08111"
+    				android:layout_gravity="center_horizontal"
+    				android:text="0" />
+    		</LinearLayout>
+    		<LinearLayout
+    			android:orientation="vertical"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:layout_alignParentRight="true" >
+    			<TextView
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_marginBottom="5px"
+    				android:textSize="20sp"
+    				android:textStyle="bold"
+    				android:textColor="#FFFFFF"
+    				android:layout_gravity="center_horizontal"
+    				android:text="@string/game_opponent" />
+    			<ImageView
+    				android:id="@+id/opponent_choice"
+    				android:layout_height="wrap_content"
+    				android:layout_width="wrap_content"
+    				android:src="@drawable/blank" />
+    			<TextView
+    				android:id="@+id/opponent_win_count"
+    				android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:textSize="25sp"
+    				android:textStyle="bold"
+    				android:textColor="#D08111"
+    				android:layout_gravity="center_horizontal"
+    				android:text="0" />
+    		</LinearLayout>
+    	</RelativeLayout>
+    	<TextView 
+    		android:id="@+id/wins_needed"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_gravity="center_horizontal"
+    		android:layout_marginBottom="30px"
+    		android:text="@string/wins_needed" />
+    	<LinearLayout 
+    		android:orientation="horizontal" 
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content" >
+    		<Button
+    			android:id="@+id/rock"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent"
+    			android:layout_weight="1"
+    			android:text="@string/game_menu_rock"
+    			android:onClick="submitChoice" />
+    		<Button
+    			android:id="@+id/paper"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent"
+    			android:layout_weight="1"
+    			android:text="@string/game_menu_paper"
+    			android:onClick="submitChoice" />
+   			<Button
+    			android:id="@+id/scissors"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent"
+    			android:layout_weight="1"
+    			android:text="@string/game_menu_scissors"
+    			android:onClick="submitChoice" />
+    	</LinearLayout>
+	</LinearLayout>
+</RelativeLayout>
