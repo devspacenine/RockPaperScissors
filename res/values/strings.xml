@@ -24,6 +24,8 @@
     <string name="pre_game_create">Create Game</string>
     <string name="title_waiting">Waiting for Connection</string>
     <string name="waiting_for_bluetooth">Waiting for another player to connect...</string>
+    <string name="waiting_for_replay">Waiting for your opponent to decide</string>
+    <string name="waiting_for_reset">Waiting for the host to choose game settings</string>
     <string name="button_scan">Scan for devices</string>
     <string name="select_device">Select a Device</string>
     <string name="none_found">No devices have been found</string>
@@ -48,7 +50,7 @@
     <string name="game_lose_scissors">Oh no! Your scissors were smashed to pieces!</string>
     <string name="game_win">You... Are... Victorious!!!!</string>
     <string name="game_lose">How sad :(. You are terrible at this game!)</string>
-    <string name="replay_declined">Your opponent chose not to play again</string>
+    <string name="replay_declined">Your opponent has left the game</string>
     <string name="post_game_next">Next Game</string>
     <string name="post_game_rematch">Rematch</string>
     <string name="wins_needed">Wins Needed: 1</string>

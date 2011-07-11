@@ -85,6 +85,7 @@ public class ButtonGame extends RockPaperScissorsGame implements View.OnTouchLis
 	 */
 	@Override
 	public void continueGame() {
+		super.continueGame();
 		rock_button.setClickable(true);
 		paper_button.setClickable(true);
 		scissors_button.setClickable(true);

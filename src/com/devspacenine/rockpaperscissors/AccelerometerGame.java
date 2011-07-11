@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.ViewStub;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -92,7 +93,8 @@ public class AccelerometerGame extends RockPaperScissorsGame implements SensorEv
 	/*
 	 * Disables buttons so that they cannot be clicked and starts the end game sequence.
 	 */
-	public void endGame(int messageResource, int soundIndex) {
+    @Override
+	public void endGame() {
 		rock_select.setClickable(false);
 		paper_select.setClickable(false);
 		scissors_select.setClickable(false);
@@ -160,8 +162,25 @@ public class AccelerometerGame extends RockPaperScissorsGame implements SensorEv
     	}
     }
     
+    @Override
+    protected void resetGame() {
+    	rock_select.setChecked(false);
+    	paper_select.setChecked(false);
+    	scissors_select.setChecked(false);
+    	chosen_select = empty_select;
+    	select_checked = false;
+    	mSensorManager.unregisterListener(this);
+    	super.resetGame();
+    }
+    
+    @Override
     protected void continueGame() {
     	super.continueGame();
-    	mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+    	rock_select.setClickable(true);
+		paper_select.setClickable(true);
+		scissors_select.setClickable(true);
+		if(select_checked) {
+			mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+		}
     }
 }

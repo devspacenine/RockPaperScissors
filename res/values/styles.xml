@@ -28,4 +28,14 @@
 		<item name="android:shadowDy">1.0</item>
 		<item name="android:shadowRadius">1.0</item>
 	</style>
+	<style name="Notification">
+		<item name="android:background">@drawable/notification_bg</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">16sp</item>
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:shadowColor">#666666</item>
+		<item name="android:shadowDx">1.0</item>
+		<item name="android:shadowDy">1.0</item>
+		<item name="android:shadowRadius">1.0</item>
+	</style>
 </resources>

@@ -35,16 +35,19 @@ import android.widget.Toast;
 public class RockPaperScissorsGame extends Activity implements OnDismissListener, OnCancelListener {
 	// Message types sent from the BluetoothChatService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_CONNECT_SUCCESSFUL = 4;
-    public static final int MESSAGE_TOAST = 5;
-    public static final int MESSAGE_CONNECT_FAILED = 6;
-    public static final int MESSAGE_DISCONNECTED = 7;
-    public static final int MESSAGE_READY_FOR_DISCONNECT = 8;
+    public static final int MESSAGE_PLAY = 2;
+    public static final int MESSAGE_SYNC = 3;
+    public static final int MESSAGE_REPLAY = 4;
+    public static final int MESSAGE_WRITE = 5;
+    public static final int MESSAGE_CONNECT_SUCCESSFUL = 6;
+    public static final int MESSAGE_TOAST = 7;
+    public static final int MESSAGE_CONNECT_FAILED = 8;
+    public static final int MESSAGE_DISCONNECTED = 9;
+    public static final int MESSAGE_READY_FOR_DISCONNECT = 10;
     
     // Dialog ids for the onCreateDialog method
     public static final int DIALOG_REPLAY = 1;
+    public static final int DIALOG_BEST_OF = 2;
     
     // Key names received from the BluetoothChatService Handler
     public static final String DEVICE_NAME = "device_name";
@@ -180,19 +183,32 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 		setContentView(R.layout.game);
 		
 		// Initialize variables
+		// Shared application settings
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		player_name = settings.getString("name_preference", "");
+		
+		// Intent that started this activity
 		sender_intent = getIntent();
+		
+		// Single player or bluetooth game
 		opponent_choice = Opponent.valueOf(sender_intent.getStringExtra("opponent_choice"));
+		
+		// Application context and resources
 		res = getResources();            	
 		ctx = getApplicationContext();
+		
+		// Views that may need to be modified at some point
 		opponent_img = (ImageView) findViewById(R.id.opponent_choice);
 		player_img = (ImageView) findViewById(R.id.player_choice);
 		player_win_count_txt = (TextView) findViewById(R.id.player_win_count);
 		opponent_win_count_txt = (TextView) findViewById(R.id.opponent_win_count);
-		wins_needed = sender_intent.getIntExtra("wins_needed", 1);
 		wins_needed_txt = (TextView) findViewById(R.id.wins_needed);
+        
+		// Retrieve number of wins needed for a victory and update the layout
+		wins_needed = sender_intent.getIntExtra("wins_needed", 1);
 		wins_needed_txt.setText("Wins Needed: " + wins_needed);
+		
+		// Initialize message booleans
 		choice_made = false;
 		opponent_choice_made = false;
 		synced = false;
@@ -202,7 +218,7 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 		replay_message_sent = false;
 		opponent_will_replay = false;
 		player_will_replay = false;
-		current_toast = Toast.makeText(ctx, "Good Luck!", Toast.LENGTH_SHORT);
+		current_toast = Toast.makeText(ctx, "", Toast.LENGTH_SHORT);
 		
 		// Register for broadcasts when this device ends discoverability
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
@@ -214,24 +230,26 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 			bluetooth_role = sender_intent.getStringExtra("bluetooth_role");
 	        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	
-	        // If the adapter is null, then Bluetooth is not supported
+	        // If the adapter is null, then Bluetooth is not supported. End the game
 	        if (mBluetoothAdapter == null) {
-	            Toast.makeText(this, "Bluetooth is not supported on your device. Ending game...", Toast.LENGTH_LONG).show();
+	            showNotification("Bluetooth is not supported on your device. Ending game...");
 	            finish();
 	            return;
 	        }else{
-	        	// If BT is not on, request that it be enabled.
+	        	// If Bluetooth is not on, request that it be enabled.
 	        	if (!mBluetoothAdapter.isEnabled()) {
 	                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 	                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 	            }else{
-		            if(bluetooth_role.equals("join")) {
-		            	Log.d("DSN Debug", "This is the join device");
-		            	// Launch the DeviceListActivity to see devices and do scan
+		            if(bluetooth_role.equals("client")) {
+		            	// This is a client device. Display a list of available bluetooth devices to choose
+		            	// from
+		            	Log.d("DSN Debug", "This is the client device");
 		            	Intent connectIntent = new Intent(this, DeviceListActivity.class);
 		            	startActivityForResult(connectIntent, REQUEST_CONNECT_DEVICE);
 		            }else{
-		            	Log.d("DSN Debug", "This is the create device");
+		            	// This is the host device. Display a waiting dialog until a remote device connects
+		            	Log.d("DSN Debug", "This is the host device");
 		            	waiting_dialog = ProgressDialog.show(RockPaperScissorsGame.this, "", getString(R.string.waiting_for_bluetooth), true, true);
 		            	waiting_dialog.setOnCancelListener(this);
 		            	waiting_dialog.setOnDismissListener(this);
@@ -239,7 +257,6 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 	            }
 	        }
 		}
-		current_toast.show();
 		
 		mOutcomeMap = new HashMap<MatchUp, Boolean>();
 		mOutcomeMap.put(new MatchUp(PlayChoice.ROCK, PlayChoice.SCISSORS), true);
@@ -261,18 +278,15 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     	Log.d("DSN Debug", "Calling onStart");
     	super.onStart();
     	
-    	// If BT is not on, request that it be enabled.
-        // setupGame() will then be called during onActivityResult
-    	if(opponent_choice == Opponent.FRIEND){ 
+    	if(opponent_choice == Opponent.FRIEND){
+    		// This is a bluetooth game. Make sure the bluetooth service is turned on
 	        if (!mBluetoothAdapter.isEnabled()) {
 	            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 	            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-	        // Otherwise, setup the chat session
 	        } else {
+	        	// Bluetooth is on. Setup the game if it hasn't been already
 	            if (mGameService == null) setupGame();
 	        }
-    	}else{
-    		setupGame();
     	}
     }
     
@@ -281,13 +295,14 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     	Log.d("DSN Debug", "Calling onResume");
     	super.onResume();
     	
-    	// Performing this check in onResume() covers the case in which BT was
+    	// Performing this check in onResume() covers the case in which Bluetooth was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+    	// Make sure the game service is set up first.
         if (mGameService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mGameService.getState() == BluetoothGameService.STATE_NONE && bluetooth_role.equals("create")) {
-              // Start the Bluetooth game services
+            // If the state of the game service is STATE_NONE then it needs to be started. Only
+        	// the host device can start the game server
+            if (mGameService.getState() == BluetoothGameService.STATE_NONE && bluetooth_role.equals("host")) {
               mGameService.start();
             }
         }
@@ -295,11 +310,14 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     
     protected void setupGame() {
     	Log.d("DSN Debug", "Calling setupGame");
+    	
     	if(opponent_choice == Opponent.FRIEND){ 
-			// Initialize the BluetoothGameService to perform bluetooth connections
+			// This is a bluetooth game. Initialize a BluetoothGameService to handle
+    		// communication between other bluetooth devices
 	        mGameService = new BluetoothGameService(this, mHandler, player_name);
 	        
-	        if(bluetooth_role.equals("create")) {
+	        // Only the host device can start the game server
+	        if(bluetooth_role.equals("host")) {
 	        	mGameService.start();
 	        }
 		}
@@ -309,18 +327,19 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     public void onStop() {
     	Log.d("DSN Debug", "Calling onStop");
     	super.onStop();
-    	finish();
     }
     
     @Override
     public void onDestroy() {
     	Log.d("DSN Debug", "Calling onDestroy");
         super.onDestroy();
-        // Stop the Bluetooth game services
+        
+        // Stop the game service and release its resources
         if (mGameService != null) {
         	mGameService.stop();
         	mGameService = null;
         }
+        // Unregister any BroadcastReceivers that are still listening
         try{
         	unregisterReceiver(mReceiver);
         }catch(Exception e) {
@@ -328,41 +347,111 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
         }
     }
     
+    /**
+     * Builds alert dialogs when they are requested
+     * @param id The id of the dialog to build
+     */
     protected Dialog onCreateDialog(int id) {
     	Dialog dialog;
     	switch(id) {
+    	// This dialog asks the player if he/she wants to play another game or return to the main menu
     	case DIALOG_REPLAY:
-    		final String[] play_again_items = {"Play Again", "Leave Game"};
-    		
+    		// Set the dialog's title, options, and OnClickListener
+    		final String[] play_again_items = {"Start A New Match", "Return to Main Menu"};
     		AlertDialog.Builder play_again_builder = new AlertDialog.Builder(this);
-    		play_again_builder.setTitle("Play another game?");
+    		play_again_builder.setTitle("Rematch?");
     		play_again_builder.setItems(play_again_items, new DialogInterface.OnClickListener() {
     			public void onClick(DialogInterface dialog, int item) {
     				String replayString;
-    				if(play_again_items[item].equals("Play Again")) {
-    					player_will_replay = true;
-    					replayString = "Replay:agree";
-    					mGameService.write(replayString.getBytes());
-    					replay_message_sent = true;
-    					dialog.dismiss();
-    					if(replay_message_received) {
-    						if(opponent_will_replay) {
-    							resetGame();
-    						}else{
-    							endGame();
-    						}
+    				if(play_again_items[item].equals("Start A New Match")) {
+    					// The player chose to play again
+    					if(opponent_choice == Opponent.FRIEND){
+    						// This is a bluetooth game. Send a ready message to the opponent's device and
+    						// dismiss this dialog
+	    					player_will_replay = true;
+	    					replayString = "Replay:agree";
+	    					mGameService.write(replayString.getBytes());
+	    					replay_message_sent = true;
+	    					dialog.dismiss();
+	    					// If the opponent's continue decision has been received then reset the game
+	    					if(replay_message_received) {
+	    						if(opponent_will_replay) resetGame();
+	    					}else{
+	    						// Still waiting on the opponent. Display a waiting dialog until a message
+	    						// is received
+	    						waiting_dialog = ProgressDialog.show(RockPaperScissorsGame.this, "",
+	    								getString(R.string.waiting_for_replay), true, true);
+	    					}
+    					}else{
+    						// This is a single player game. Dismiss this dialog and reset the game
+    						dialog.dismiss();
+    						resetGame();
     					}
     				}else{
-    					player_will_replay = false;
-    					replayString = "Replay:disagree";
-    					mGameService.write(replayString.getBytes());
-    					replay_message_sent = true;
-    					dialog.dismiss();
-    					endGame();
+    					// The player chose to return to the main menu
+    					if(opponent_choice == Opponent.FRIEND) {
+    						// This is a bluetooth game. Send a decline message to the opponent's device,
+    						// dismiss this dialog, and end the game
+	    					player_will_replay = false;
+	    					replayString = "Replay:disagree";
+	    					mGameService.write(replayString.getBytes());
+	    					replay_message_sent = true;
+	    					dialog.dismiss();
+	    					showNotification("Disconnecting from opponent's device");
+	    					// Delay the endGame() call to ensure the OutputStream isn't overloaded by
+	    					// calling write() too fast consecutively
+	    					delayHandler.postDelayed(new Runnable(){public void run(){endGame();}}, 500);
+    					}else{
+    						// This is a single player game. Dismiss this dialog and end the game
+    						dialog.dismiss();
+    						endGame();
+    					}
     				}
     			}
     		});
     		dialog = play_again_builder.create();
+    		break;
+    	// This dialog ask the host to choose how many games to play the best of
+    	case DIALOG_BEST_OF:
+    		// Set the dialog's title, options, and OnClickListener
+    		final String[] best_of_items = {"1", "3", "5", "7", "9"};
+    		AlertDialog.Builder best_of_builder = new AlertDialog.Builder(this);
+    		best_of_builder.setTitle("Best of how many games?");
+    		best_of_builder.setItems(best_of_items, new DialogInterface.OnClickListener() {
+    			public void onClick(DialogInterface dialog, int item) {
+    				int best_of = Integer.parseInt(best_of_items[item]);
+    				// Determine how many wins are needed for a victory and dismiss this dialog
+					switch(best_of) {
+					case 1:
+						wins_needed = 1;
+						break;
+					case 3:
+						wins_needed = 2;
+						break;
+					case 5:
+						wins_needed = 3;
+						break;
+					case 7:
+						wins_needed = 4;
+						break;
+					case 9:
+						wins_needed = 5;
+						break;
+					default:
+						wins_needed = 1;
+					}
+    				dialog.dismiss();
+    				wins_needed_txt.setText("Wins Needed: " + wins_needed);
+    				if(opponent_choice == Opponent.FRIEND) {
+    					// This is a bluetooth game. Send a synchronization message to the client
+    					// device with game settings
+	    				String syncMsg = "Sync:" + wins_needed;
+	                	mGameService.write(syncMsg.getBytes());
+    				}
+                	continueGame();
+    			}
+    		});
+    		dialog = best_of_builder.create();
     		break;
     	default:
     		dialog = null;
@@ -372,11 +461,12 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     
     //OnDismissListener interface methods
     public void onDismiss(DialogInterface dialog) {
-    	
+    	Log.d("DSN Debug", "A dialog was dismissed");
     }
     
     //OnCancelListener interface methods
     public void onCancel(DialogInterface dialog) {
+    	Log.d("DSN Debug", "A dialog was canceled");
     	if(mGameService != null) mGameService.stop();
     	finish();
     }
@@ -385,11 +475,23 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
      * Ensures that this device is discoverable to other bluetooth devices
      */
     protected void ensureDiscoverable() {
+    	// If the device isn't already discoverable then start discoverability for 30 seconds
         if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 30);
             startActivity(discoverableIntent);
         }
+    }
+    
+    /**
+     * Displays a short notification at the bottom of the layout
+     * 
+     * @param msg - The String to be displayed as a notification
+     */
+    protected synchronized void showNotification(String msg) {
+    	current_toast.cancel();
+    	current_toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+    	current_toast.show();
     }
 
     /**
@@ -401,14 +503,18 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
         setTitle(res.getString(R.string.app_name) + " - " + subTitle);
     }
     
+    /**
+     * Subclasses must override this to play a sound when a player's choice is submitted
+     */
     protected void playSubmitSound() {
     }
     
- // The Handler that gets information back from the BluetoothGameService
+    // The Handler that gets information back from the BluetoothGameService
     protected final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+            // This message means the state of the game service has changed
             case MESSAGE_STATE_CHANGE:
             	Log.d("DSN Debug", "Received message: MESSAGE_STATE_CHANGED - " + msg.arg1);
                 switch (msg.arg1) {
@@ -424,169 +530,203 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
                     break;
                 }
                 break;
+                
             // This message means the local connectedThread has sent a message out
             case MESSAGE_WRITE:
-            	Log.d("DSN Debug", "Received message: MESSAGE_WRITE");
-                //byte[] writeBuf = (byte[]) msg.obj;
-                // construct a string from the buffer
-                //String writeMessage = new String(writeBuf);
-                if(bluetooth_role.equals("create") && !synced) {
+                String writeString = (String) msg.obj;
+                Log.d("DSN Debug", "Received message: MESSAGE_WRITE - " + writeString);
+                String[] writeArray = writeString.split(":");
+                String writeTag = writeArray[0];
+                if(writeTag.equals("Sync") && !synced) {
                 	synced = true;
                 }
                 break;
-            // This message means the local connectedThread has received a message from a remote device
-            case MESSAGE_READ:
-            	Log.d("DSN Debug", "Received message: MESSAGE_READ");
-                // Split the message string into its pieces
-                String readString = (String) msg.obj;
-                String[] readArray = readString.split(":");
-                String msgTag = readArray[0];
-                String msgValue = readArray[1];
-                // This is a play choice message
-                if(msgTag.equals("Play")) {
-	                opponent_play_choice = PlayChoice.valueOf(msgValue);
-	                opponent_choice_made = true;
-	                // If the player has made a choice then the outcome is ready to be calculated,
-	                // otherwise just set the opponent image to waiting and wait for player input
-	                if(choice_made) {
-	                	playSubmitSound();
-						delayHandler.postDelayed(runMatch, 500);
-	                }else{
-	                	opponent_img.setImageDrawable(res.getDrawable(R.drawable.blank_waiting));
-	                	if(choice_made) Log.d("DSN Debug", "choice_made did not set true in time");
-	                }
-                } // This is a game synchronization message
-                else if(msgTag.equals("Sync")) {
-                	if(!synced) {
-	                	wins_needed = Integer.parseInt(msgValue);
-	                	wins_needed_txt.setText("Wins Needed: " + wins_needed);
-	                	synced = true;
-                	}
-                } // This is a replay game message
-                else if(msgTag.equals("Replay")) {
-                	replay_message_received = true;
-                	if(msgValue.equals("agree")) {
-                		opponent_will_replay = true;
-                	}else{
-                		opponent_will_replay = false;
-                		removeDialog(DIALOG_REPLAY);
-                		Log.d("DSN Debug", "Opponent has chosen not to play again");
-                		Toast.makeText(getApplicationContext(), R.string.replay_declined, Toast.LENGTH_SHORT).show();
-                		endGame();
-                	}
+                
+            // This message means the opponent has sent his/her play choice
+            case MESSAGE_PLAY:
+                opponent_play_choice = PlayChoice.valueOf((String) msg.obj);
+                opponent_choice_made = true;
+                // If the player has made a choice then the outcome is ready to be calculated,
+                // otherwise just set the opponent image to waiting and wait for player input
+                if(choice_made) {
+                	playSubmitSound();
+					delayHandler.postDelayed(runMatch, 500);
+                }else{
+                	opponent_img.setImageDrawable(res.getDrawable(R.drawable.blank_waiting));
+                	if(choice_made) Log.d("DSN Debug", "choice_made did not set true in time");
                 }
                 break;
+                
+            // This message means the host is synchronizing game settings with this device
+            case MESSAGE_SYNC:
+            	if(!synced) {
+                	wins_needed = Integer.parseInt((String) msg.obj);
+                	wins_needed_txt.setText("Wins Needed: " + wins_needed);
+                	synced = true;
+                	// If this is a reset game there will be a waiting dialog that needs to be
+                	// dismissed
+                	if(waiting_dialog != null) {
+                		waiting_dialog.dismiss();
+                	}
+                	continueGame();
+            	}
+            	break;
+            	
+            // This message means the opponent has decided whether or not to play again
+            case MESSAGE_REPLAY:
+            	replay_message_received = true;
+            	if(msg.obj.equals("agree")) {
+            		// The opponent wishes to play again. Check if the player has submitted
+            		// his/her choice
+            		opponent_will_replay = true;
+            		if(replay_message_sent) {
+            			if(player_will_replay) {
+            				// Everyone wants to play again. Dismiss waiting dialogs and reset
+            				// the game variables
+            				if(waiting_dialog != null) {
+            					waiting_dialog.dismiss();
+            				}
+            				resetGame();
+            			}
+            		}
+            	}else{
+            		// The opponent does not want to play again. Remove the player's replay
+            		// dialog and end the game.
+            		opponent_will_replay = false;
+            		removeDialog(DIALOG_REPLAY);
+            		Log.d("DSN Debug", "Your opponent has left the game");
+            		showNotification(getString(R.string.replay_declined));
+            		endGame();
+            	}
+                break;
+                
+            // This message means this device has successfully connected to another device via bluetooth
             case MESSAGE_CONNECT_SUCCESSFUL:
             	Log.d("DSN Debug", "Received message: MESSAGE_CONNECT_SUCCESSFUL");
-                // save the connected device's name and update the status
+                // Save the connected device's name and address and update the activities status
                 mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                setStatus(getString(R.string.title_bluetooth_connected) + " " + mConnectedDeviceName);
-                
-                // save the device's address
                 mConnectedDeviceAddress = msg.getData().getString(DEVICE_ADDRESS);
-                if(waiting_dialog != null) {
-                	waiting_dialog.dismiss();
-                }
-                if(connecting_dialog != null) {
-                	connecting_dialog.dismiss();
-                }
-                if(bluetooth_role.equals("create") && !synced) {
+                setStatus(getString(R.string.title_bluetooth_connected) + " " + mConnectedDeviceName);
+                // Dismiss any waiting dialogs that are still up
+                if(waiting_dialog != null) waiting_dialog.dismiss();
+                if(connecting_dialog != null) connecting_dialog.dismiss();
+                // If this is the host device then send a synchronization message (wins needed) to the
+                // client device if they are not already synced
+                if(bluetooth_role.equals("host") && !synced) {
                 	String syncMsg = "Sync:" + wins_needed;
                 	mGameService.write(syncMsg.getBytes());
                 }
-                Toast.makeText(getApplicationContext(), "Connected to "
-                               + mConnectedDeviceName + ": " + mConnectedDeviceAddress, Toast.LENGTH_SHORT).show();
+                showNotification("Connected to " + mConnectedDeviceName + ": "
+                		+ mConnectedDeviceAddress);
                 break;
-            // A message handler for notifying the user
-            case MESSAGE_TOAST:
-            	Log.d("DSN Debug", "Received message: MESSAGE_TOAST");
-                Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
-                break;
+                
+            // This message means that the device failed to connect to a host
             case MESSAGE_CONNECT_FAILED:
             	Log.d("DSN Debug", "Received message: MESSAGE_CONNECT_FAILED");
-            	Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
+            	showNotification((String) msg.obj);
+            	// Dismiss the connecting dialog and end the activity
             	if(connecting_dialog != null) {
             		connecting_dialog.dismiss();
             	}
             	finish();
             	break;
+            	
+            // This message means the opponent's device has disconnected unexpectedly
             case MESSAGE_DISCONNECTED:
             	Log.d("DSN Debug", "Received message: MESSAGE_DISCONNECTED");
-            	Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
+            	showNotification((String) msg.obj);
+            	// End the game
             	finish();
             	break;
+            	
+            // This message means that this device has disconnected gracefully and is ready to end the activity
             case MESSAGE_READY_FOR_DISCONNECT:
             	Log.d("DSN Debug", "Received message: MESSAGE_READY_FOR_DISCONNECT");
-            	delayHandler.postDelayed(new Runnable(){public void run(){finish();}}, 3000);
+            	delayHandler.postDelayed(new Runnable(){public void run(){finish();}}, 1000);
             	break;
             }
         }
     };
     
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+        // The bluetooth device selector dialog has returned
         case REQUEST_CONNECT_DEVICE:
-            // When DeviceListActivity returns with a device to connect
+        	// If a device was selected try to connect to it
             if (resultCode == Activity.RESULT_OK) {
             	if(data.getBooleanExtra(DEVICE_PAIRED, false)) {
             		connecting_dialog = ProgressDialog.show(RockPaperScissorsGame.this, "", getString(R.string.connecting), true, true);
             	}else{
+            		// The host device is not paired. Add help text to the connecting dialog for accepting a pair
             		connecting_dialog = ProgressDialog.show(RockPaperScissorsGame.this, "", getString(R.string.connecting_unpaired), true, true);
             	}
                 connectDevice(data);
-            }else{
+            }else{ // No device was selected so return to the main menu
             	Log.d("DSN Debug", "REQUEST_CONNECT_DEVICE failed");
             	finish();
             }
             break;
+        // The request for bluetooth activation has returned
         case REQUEST_ENABLE_BT:
-            // When the request to enable Bluetooth returns
+        	// If bluetooth was turned on set up the game
             if (resultCode == Activity.RESULT_OK) {
-                // Bluetooth is now enabled, so set up a chat session
                 setupGame();
-                if(bluetooth_role.equals("join")) {
-	            	// Launch the DeviceListActivity to see devices and do scan
+                // If this is a client device bring up an available devices list
+                if(bluetooth_role.equals("client")) {
 	            	Intent connectIntent = new Intent(this, DeviceListActivity.class);
 	            	startActivityForResult(connectIntent, REQUEST_CONNECT_DEVICE);
-	            }else{
+	            }else{ // This device is a host so wait for a client to try and connect
 	            	waiting_dialog = ProgressDialog.show(RockPaperScissorsGame.this, "", getString(R.string.waiting_for_bluetooth), true, true);
 	            	waiting_dialog.setOnCancelListener(this);
 	            	waiting_dialog.setOnDismissListener(this);
 	            }
             } else {
-                // User did not enable Bluetooth or an error occurred
-                Toast.makeText(this, "Bluetooth must be activated to play with a friend. Ending game...", Toast.LENGTH_SHORT).show();
+                // The player did not enable Bluetooth or an error occurred. Return to the main menu
+                showNotification("Bluetooth must be activated to play with a friend. Ending game...");
                 finish();
             }
         }
     }
     
-    protected void connectDevice(Intent data) {
+    /**
+     * This method uses device data from an intent to connect to a remote bluetooth host
+     * @param hostData An intent with the host device's information attached
+     */
+    protected void connectDevice(Intent hostData) {
         // Get the device MAC address
-        String address = data.getStringExtra(DEVICE_ADDRESS);
+        String address = hostData.getStringExtra(DEVICE_ADDRESS);
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
         mGameService.connect(device);
     }
     
-    /*
+    /**
      * Determines the player's and the opponent's play choice, plays a
      * sound effect, and then calls a Runnable after a delay to calculate 
      * the outcome.
+     * @param v The ImageView that was selected by the player
      */
     protected void submitChoice(View v) {
 		ImageView img = (ImageView) v;
-		player_play_choice = PlayChoice.valueOf(v.getTag().toString());
+		player_play_choice = PlayChoice.valueOf(img.getTag().toString());
+		// Set the player's image as the image that was chosen
 		player_img.setImageDrawable(img.getDrawable());
+		// If the opponent has not submitted a choice make sure the opponent's image is blank
 		if(!opponent_choice_made) {
 			opponent_img.setImageDrawable(res.getDrawable(R.drawable.blank));
 		}
+		
 		switch(opponent_choice) {
+		// This is a bluetooth game. Make sure the devices are connected and send a message to the opponent
+		// device with the player's choice
 		case FRIEND:
 			if(mGameService != null && mGameService.getState() == BluetoothGameService.STATE_CONNECTED) {
 				String playMsg = "Play:" + v.getTag().toString();
 				mGameService.write(playMsg.getBytes());
+				// If the opponent's decision has already been received then play the appropriate sound
+				// and calculate the outcome of the match
 				if(opponent_choice_made) {
 					if(settings.getBoolean("sounds_preference", true)) {
 						playSubmitSound();
@@ -595,6 +735,9 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 				}
 			}
 			break;
+			
+		// This is a single player game. Roll a random play choice for the opponent then play the appropriate
+		// sound and calculate the outcome of the match
 		case COMPUTER:
 		default:
 			opponent_play_choice = PlayChoice.randomPlayChoice();
@@ -616,7 +759,7 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 			String text;
 			String result;
 			
-			// Set the images for each players play choice
+			// Set the images for each player's play choice
 			player_img.setImageDrawable(res.getDrawable(mChoiceMap.get(player_play_choice).mChoiceImage));
 			opponent_img.setImageDrawable(res.getDrawable(mChoiceMap.get(opponent_play_choice).mChoiceImage));
 			
@@ -646,29 +789,25 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 			choice_made = false;
 			opponent_choice_made = false;
 			
-			// Check if the game is finished
-			if(opponent_win_count != wins_needed && player_win_count != wins_needed) { // The game is not finished
-				current_toast.cancel();
-				current_toast = Toast.makeText(ctx, text, Toast.LENGTH_SHORT);
-				current_toast.show();
+			// If the game is not finished then call continueGame() to reset variables for the next round
+			if(opponent_win_count != wins_needed && player_win_count != wins_needed) {
+				showNotification(text);
 				continueGame();
 			}else{
-				current_toast.cancel();
-				if(opponent_win_count == wins_needed) { // Game over, opponent wins
+				// The game is over. Determine the winner and play the appropriate sounds. Then display
+				// a play again dialog to the user
+				if(opponent_win_count == wins_needed) { // Opponent wins
 					if(settings.getBoolean("sounds_preference", true)) {
 						SoundEffectManager.playSound(3, 1f);
 					}
-					current_toast = Toast.makeText(ctx, R.string.game_lose, Toast.LENGTH_SHORT);
-					current_toast.show();
-					showDialog(DIALOG_REPLAY);
-				}else if(player_win_count == wins_needed) { // Game over, player wins
+					showNotification(getString(R.string.game_lose));
+				}else{ // Player wins
 					if(settings.getBoolean("sounds_preference", true)) {
 						SoundEffectManager.playSound(2, 1f);
 					}
-					current_toast = Toast.makeText(ctx, R.string.game_win, Toast.LENGTH_SHORT);
-					current_toast.show();
-					showDialog(DIALOG_REPLAY);
+					showNotification(getString(R.string.game_win));
 				}
+				showDialog(DIALOG_REPLAY);
 			}
 		}
 	};
@@ -686,12 +825,15 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 	 * @param soundIndex
 	 */
 	protected void resetGame() {
+		Log.d("DSN Debug", "Resetting the game");
+		// Reset the win counters and images for each player
 		player_win_count = 0;
 		player_win_count_txt.setText("0");
+		player_img.setImageDrawable(res.getDrawable(R.drawable.blank));
 		opponent_win_count = 0;
 		opponent_win_count_txt.setText("0");
-		choice_made = false;
-		opponent_choice_made = false;
+		opponent_img.setImageDrawable(res.getDrawable(R.drawable.blank));
+		// Reset message booleans
 		synced = false;
 		opponent_ready_to_disconnect = false;
 		player_ready_to_disconnect = false;
@@ -699,40 +841,59 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 		replay_message_sent = false;
 		opponent_will_replay = false;
 		player_will_replay = false;
+		// If this is a bluetooth game then only the host will be able to choose game settings
+		if(opponent_choice == Opponent.FRIEND) {
+			if(bluetooth_role.equals("host")) {
+				showDialog(DIALOG_BEST_OF);
+			}else{ // Display a waiting dialog for client devices until the host has chosen settings
+				waiting_dialog = ProgressDialog.show(RockPaperScissorsGame.this, "",
+						getString(R.string.waiting_for_reset), true, true);
+			}
+		}else{
+			// This is a single player game. Display a dialog for the next match's settings
+			showDialog(DIALOG_BEST_OF);
+		}
 	}
 	
-	/*
-	 * Disables buttons so that they cannot be clicked and starts the end game sequence.
+	/**
+	 * Disables buttons so that they cannot be clicked and starts the end-game sequence.
 	 */
 	protected void endGame() {
+		// If this is a bluetooth game and this is the host device, send a disconnect message to the
+		// client device to initiate a graceful disconnect
 		if(mGameService != null) {
 			if(mGameService.getState() == BluetoothGameService.STATE_CONNECTED) {
-				if(bluetooth_role.equals("create")) {
+				if(bluetooth_role.equals("host")) {
 					Log.d("DSN Debug", "Ending game from endGame method");
 					String disconnectString = "Disconnect:initiate";
 					mGameService.write(disconnectString.getBytes());
 				}
 			}
     	}else{
-    		delayHandler.postDelayed(new Runnable(){public void run(){finish();}}, 3000);
+    		// This is a single player game. To clean up finish the activity
+    		finish();
     	}
 	}
 	
-	// The BroadcastReceiver that listens for this device's discoverability to end
+	// The BroadcastReceiver that listens for this device's discoverability to end. This BroadcastReceiver
+	// is only registered until a remote device successfully connects to this device
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
         	String action = intent.getAction();
+        	
+        	// This device's bluetooth scan mode has changed
         	if(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED.equals(action)) {
-	        	int prev_scan_mode = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, BluetoothAdapter.SCAN_MODE_NONE);
-	        	
+	        	int prev_scan_mode = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE,
+	        			BluetoothAdapter.SCAN_MODE_NONE);
 	        	switch(intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.SCAN_MODE_NONE)) {
+	        	// Bluetooth is turned on but discoverability has ended
 	        	case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
 	        	case BluetoothAdapter.SCAN_MODE_NONE:
 	        		// When this device has ended discoverability and no connection has been made, return
 	        		// to the title screen.
 	        		if(prev_scan_mode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-	        			Toast.makeText(ctx, "No devices tried to connect", Toast.LENGTH_SHORT).show();
+	        			showNotification("No devices tried to connect");
 	        			finish();
 	        		}
 	        		break;

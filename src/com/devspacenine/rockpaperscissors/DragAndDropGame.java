@@ -112,6 +112,7 @@ public class DragAndDropGame extends RockPaperScissorsGame implements View.OnTou
 	 */
 	@Override
 	public void continueGame() {
+		super.continueGame();
 		rock_img.setClickable(true);
 		paper_img.setClickable(true);
 		scissors_img.setClickable(true);

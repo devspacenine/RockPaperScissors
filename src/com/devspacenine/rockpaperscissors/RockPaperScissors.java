@@ -163,11 +163,11 @@ public class RockPaperScissors extends Activity implements View.OnTouchListener,
     			public void onClick(DialogInterface dialog, int item) {
     				if(multiplayer_items[item] == "Join Game") {
     					gameIntent.putExtra("wins_needed", 1);
-    					gameIntent.putExtra("bluetooth_role", "join");
+    					gameIntent.putExtra("bluetooth_role", "client");
     					dialog.dismiss();
     					startActivity(gameIntent);
     				}else{
-    					gameIntent.putExtra("bluetooth_role", "create");
+    					gameIntent.putExtra("bluetooth_role", "host");
     					dialog.dismiss();
     					showDialog(BEST_OF_DIALOG);
     				}

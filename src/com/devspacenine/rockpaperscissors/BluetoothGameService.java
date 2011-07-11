@@ -211,11 +211,8 @@ public class BluetoothGameService {
      */
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(ButtonGame.MESSAGE_CONNECT_FAILED);
-        Bundle bundle = new Bundle();
-        bundle.putString(ButtonGame.TOAST, "Unable to connect device");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
+        mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_CONNECT_FAILED,
+        		"Unable to connect to the remote device").sendToTarget();
     }
 
     /**
@@ -223,11 +220,8 @@ public class BluetoothGameService {
      */
     private void connectionLost() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_DISCONNECTED);
-        Bundle bundle = new Bundle();
-        bundle.putString(RockPaperScissorsGame.TOAST, "Lost connection with opponent's device");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
+        mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_DISCONNECTED,
+        		"Lost connection with opponent's device").sendToTarget();
     }
 
     /**
@@ -438,30 +432,45 @@ public class BluetoothGameService {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     
-                    // construct a string from the valid bytes in the buffer
+                    // construct a string from the valid bytes in the buffer and split
+                    // it into an array by ":". The first value should be a tag and the second
+                    // value should be a message
                     String readString = new String(buffer, 0, bytes);
+                    String[] readArray = readString.split(":");
+                    String readTag = readArray[0];
+                    String readMsg = readArray[1];
                     
                     // Check if the message is a disconnect message
-                    if(readString.equals("Disconnect:initiate")) {
-                    	// The hosting device has initiated a clean disconnect. Send a
-                    	// disconnect message to the client device and close this thread
-                    	String disconnectString = "Disconnect:finish";
-    					write(disconnectString.getBytes());
-                    	running = false;
+                    if(readTag.equals("Disconnect")) {
+	                    if(readMsg.equals("initiate")) {
+	                    	// The hosting device has initiated a clean disconnect. Send a
+	                    	// disconnect message to the client device and close this thread
+	                    	Log.d("DSN Debug", "The hosting device has requested to end the connection");
+	                    	String disconnectString = "Disconnect:finish";
+	    					write(disconnectString.getBytes());
+	                    	running = false;
+	                    }
+	                    else if(readMsg.equals("finish")) {
+	                    	// The client device has received a clean disconnect message. Close
+	                    	// this thread and this device's BluetoothSocket
+	                    	running = false;
+	                    	try {
+	                            mmSocket.close();
+	                        } catch (IOException e2) {
+	                        	Log.d("DSN Debug", "Could not close the BluetoothSocket after input stream failure: " + e2.getMessage());
+	                        }
+	                    }
                     }
-                    else if(readString.equals("Disconnect:finish")) {
-                    	// The client device has received a clean disconnect message. Close
-                    	// this thread and this device's BluetoothSocket
-                    	running = false;
-                    	try {
-                            mmSocket.close();
-                        } catch (IOException e2) {
-                        	Log.d("DSN Debug", "Could not close the BluetoothSocket after input stream failure: " + e2.getMessage());
-                        }
-                    } // The message is not a disconnect message so send it to this device's handler
-                    else {
-                    	mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_READ, readString)
-                            .sendToTarget();
+                    else { // The message is not a disconnect message so dispatch it to the device's handler
+                    	if(readTag.equals("Play")) {
+	                    	mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_PLAY, readMsg).sendToTarget();
+                    	}
+                    	else if(readTag.equals("Sync")) {
+                    		mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_SYNC, readMsg).sendToTarget();
+                    	}
+                    	else if(readTag.equals("Replay")) {
+                    		mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_REPLAY, readMsg).sendToTarget();
+                    	}
                     }
                 } catch (IOException e) {
                 	Log.d("DSN Debug", "Could not read input stream - " + e.getMessage());
@@ -491,7 +500,8 @@ public class BluetoothGameService {
             try {
                 mmOutStream.write(buffer);
                 // Share the sent message back to the UI Activity
-                mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_WRITE, -1, -1, buffer)
+                String writeString = new String(buffer);
+                mHandler.obtainMessage(RockPaperScissorsGame.MESSAGE_WRITE, writeString)
                         .sendToTarget();
             } catch (IOException e) {
             	Log.d("DSN Debug", "Could not write buffer to output stream: " + e.getMessage());
