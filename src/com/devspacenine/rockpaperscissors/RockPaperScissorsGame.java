@@ -8,16 +8,18 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -42,7 +44,7 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     public static final int MESSAGE_READY_FOR_DISCONNECT = 8;
     
     // Dialog ids for the onCreateDialog method
-    public static final int DIALOG_WAITING_FOR_CONNECTION = 1;
+    public static final int DIALOG_REPLAY = 1;
     
     // Key names received from the BluetoothChatService Handler
     public static final String DEVICE_NAME = "device_name";
@@ -157,6 +159,10 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
     protected boolean opponent_choice_made;
     protected boolean opponent_ready_to_disconnect;
     protected boolean player_ready_to_disconnect;
+    protected boolean replay_message_received;
+    protected boolean replay_message_sent;
+    protected boolean opponent_will_replay;
+    protected boolean player_will_replay;
 	
     protected HashMap<MatchUp, Boolean> mOutcomeMap;
     protected EnumMap<PlayChoice, ChoiceData> mChoiceMap;
@@ -192,6 +198,10 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 		synced = false;
 		opponent_ready_to_disconnect = false;
 		player_ready_to_disconnect = false;
+		replay_message_received = false;
+		replay_message_sent = false;
+		opponent_will_replay = false;
+		player_will_replay = false;
 		current_toast = Toast.makeText(ctx, "Good Luck!", Toast.LENGTH_SHORT);
 		
 		// Register for broadcasts when this device ends discoverability
@@ -318,6 +328,48 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
         }
     }
     
+    protected Dialog onCreateDialog(int id) {
+    	Dialog dialog;
+    	switch(id) {
+    	case DIALOG_REPLAY:
+    		final String[] play_again_items = {"Play Again", "Leave Game"};
+    		
+    		AlertDialog.Builder play_again_builder = new AlertDialog.Builder(this);
+    		play_again_builder.setTitle("Play another game?");
+    		play_again_builder.setItems(play_again_items, new DialogInterface.OnClickListener() {
+    			public void onClick(DialogInterface dialog, int item) {
+    				String replayString;
+    				if(play_again_items[item].equals("Play Again")) {
+    					player_will_replay = true;
+    					replayString = "Replay:agree";
+    					mGameService.write(replayString.getBytes());
+    					replay_message_sent = true;
+    					dialog.dismiss();
+    					if(replay_message_received) {
+    						if(opponent_will_replay) {
+    							resetGame();
+    						}else{
+    							endGame();
+    						}
+    					}
+    				}else{
+    					player_will_replay = false;
+    					replayString = "Replay:disagree";
+    					mGameService.write(replayString.getBytes());
+    					replay_message_sent = true;
+    					dialog.dismiss();
+    					endGame();
+    				}
+    			}
+    		});
+    		dialog = play_again_builder.create();
+    		break;
+    	default:
+    		dialog = null;
+    	}
+    	return dialog;
+    }
+    
     //OnDismissListener interface methods
     public void onDismiss(DialogInterface dialog) {
     	
@@ -409,6 +461,18 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 	                	wins_needed = Integer.parseInt(msgValue);
 	                	wins_needed_txt.setText("Wins Needed: " + wins_needed);
 	                	synced = true;
+                	}
+                } // This is a replay game message
+                else if(msgTag.equals("Replay")) {
+                	replay_message_received = true;
+                	if(msgValue.equals("agree")) {
+                		opponent_will_replay = true;
+                	}else{
+                		opponent_will_replay = false;
+                		removeDialog(DIALOG_REPLAY);
+                		Log.d("DSN Debug", "Opponent has chosen not to play again");
+                		Toast.makeText(getApplicationContext(), R.string.replay_declined, Toast.LENGTH_SHORT).show();
+                		endGame();
                 	}
                 }
                 break;
@@ -588,10 +652,23 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 				current_toast = Toast.makeText(ctx, text, Toast.LENGTH_SHORT);
 				current_toast.show();
 				continueGame();
-			}else if(opponent_win_count == wins_needed) { // Game over, opponent wins
-				endGame(R.string.game_lose, 3);
-			}else if(player_win_count == wins_needed) { // Game over, player wins
-				endGame(R.string.game_win, 2);
+			}else{
+				current_toast.cancel();
+				if(opponent_win_count == wins_needed) { // Game over, opponent wins
+					if(settings.getBoolean("sounds_preference", true)) {
+						SoundEffectManager.playSound(3, 1f);
+					}
+					current_toast = Toast.makeText(ctx, R.string.game_lose, Toast.LENGTH_SHORT);
+					current_toast.show();
+					showDialog(DIALOG_REPLAY);
+				}else if(player_win_count == wins_needed) { // Game over, player wins
+					if(settings.getBoolean("sounds_preference", true)) {
+						SoundEffectManager.playSound(2, 1f);
+					}
+					current_toast = Toast.makeText(ctx, R.string.game_win, Toast.LENGTH_SHORT);
+					current_toast.show();
+					showDialog(DIALOG_REPLAY);
+				}
 			}
 		}
 	};
@@ -602,16 +679,32 @@ public class RockPaperScissorsGame extends Activity implements OnDismissListener
 	protected void continueGame() {
 	}
 	
+	/**
+	 * Resets variables to their initial values and restarts the game
+	 * 
+	 * @param messageResource
+	 * @param soundIndex
+	 */
+	protected void resetGame() {
+		player_win_count = 0;
+		player_win_count_txt.setText("0");
+		opponent_win_count = 0;
+		opponent_win_count_txt.setText("0");
+		choice_made = false;
+		opponent_choice_made = false;
+		synced = false;
+		opponent_ready_to_disconnect = false;
+		player_ready_to_disconnect = false;
+		replay_message_received = false;
+		replay_message_sent = false;
+		opponent_will_replay = false;
+		player_will_replay = false;
+	}
+	
 	/*
 	 * Disables buttons so that they cannot be clicked and starts the end game sequence.
 	 */
-	protected void endGame(int messageResource, int soundIndex) {
-		if(settings.getBoolean("sounds_preference", true)) {
-			SoundEffectManager.playSound(soundIndex, 1f);
-		}
-		current_toast.cancel();
-		current_toast = Toast.makeText(ctx, messageResource, Toast.LENGTH_SHORT);
-		current_toast.show();
+	protected void endGame() {
 		if(mGameService != null) {
 			if(mGameService.getState() == BluetoothGameService.STATE_CONNECTED) {
 				if(bluetooth_role.equals("create")) {

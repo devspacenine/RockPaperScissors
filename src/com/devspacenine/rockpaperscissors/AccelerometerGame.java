@@ -97,7 +97,7 @@ public class AccelerometerGame extends RockPaperScissorsGame implements SensorEv
 		paper_select.setClickable(false);
 		scissors_select.setClickable(false);
 		
-		super.endGame(messageResource, soundIndex);
+		super.endGame();
 	}
     
     // SensorEventListener interface methods

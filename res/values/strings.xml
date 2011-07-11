@@ -48,6 +48,7 @@
     <string name="game_lose_scissors">Oh no! Your scissors were smashed to pieces!</string>
     <string name="game_win">You... Are... Victorious!!!!</string>
     <string name="game_lose">How sad :(. You are terrible at this game!)</string>
+    <string name="replay_declined">Your opponent chose not to play again</string>
     <string name="post_game_next">Next Game</string>
     <string name="post_game_rematch">Rematch</string>
     <string name="wins_needed">Wins Needed: 1</string>
